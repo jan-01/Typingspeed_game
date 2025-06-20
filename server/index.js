@@ -6,23 +6,23 @@ const app = express();
 const PORT = 3001;
 
 app.use(cors());
-
 app.use(express.json());
 
-// Load scores or initialize
 const SCORE_FILE = './scores.json';
 let scores = [];
-if (fs.existsSync(SCORE_FILE)) { 
-  
-  fs.writeFileSync(SCORE_FILE, '[]');
 
+// Load existing scores from file if it exists
+if (fs.existsSync(SCORE_FILE)) {
   try {
     const data = fs.readFileSync(SCORE_FILE, 'utf-8');
-    scores = JSON.parse(data); [];
+    scores = JSON.parse(data);
   } catch (error) {
     console.error('Error reading scores.json:', error);
     scores = [];
   }
+} else {
+  // If no file exists, create an empty one
+  fs.writeFileSync(SCORE_FILE, '[]');
 }
 
 // GET top 5 scores by WPM
@@ -34,7 +34,7 @@ app.get('/scores', (req, res) => {
   res.json(top);
 });
 
-// POST score
+// POST new score
 app.post('/scores', (req, res) => {
   console.log('📥 Received POST /scores:', req.body);
 
@@ -56,6 +56,7 @@ app.post('/scores', (req, res) => {
   res.status(201).json({ message: 'Score saved!' });
 });
 
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
